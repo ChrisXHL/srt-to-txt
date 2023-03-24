@@ -1,0 +1,22 @@
+import re
+
+def convert_timestamp_format(input_string):
+    pattern = re.compile(r'(\d{2}:\d{2}):\d{2},\d{3}')
+    start_time = pattern.match(input_string).group(1)
+    output_string = f'[{start_time}]'
+    return output_string
+
+def process_srt_file(input_file, output_file):
+    with open(input_file, 'r', encoding='utf-8') as infile, open(output_file, 'w', encoding='utf-8') as outfile:
+        lines = infile.readlines()
+        for line in lines:
+            if re.match(r'\d{2}:\d{2}:\d{2},\d{3} --> \d{2}:\d{2}:\d{2},\d{3}', line):
+                converted_timestamp = convert_timestamp_format(line)
+                outfile.write(converted_timestamp + '\n')
+            elif not re.match(r'\d+\s*\n', line):  # Skip line if it matches the pattern of a number followed by a newline
+                outfile.write(line)
+
+input_file = 'input.srt'
+output_file = 'output.txt'
+
+process_srt_file(input_file, output_file)
